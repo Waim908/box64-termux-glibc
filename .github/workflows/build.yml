@@ -32,8 +32,8 @@ jobs:
             else
               make install
               cd /data/data/com.termux/files/usr
-              tar -I "xz -T$(nproc)" -cvf ~/box64-glibc.tar.xz glibc/
-              cd ~
+              tar -I "xz -T$(nproc)" -cvf /tmp/box64-glibc.tar.xz glibc/
+              md5sum /tmp/box64-glibc.tar.xz > /tmp/md5.txt
             fi
           fi
       # - name: Checkout
@@ -46,7 +46,9 @@ jobs:
           draft: false
           prerelease: false
           tag_name: test
-          files: box64-glibc.tar.xz
+          files: |
+            /tmp/box64-glibc.tar.xz
+            /tmp/md5.txt
 
 
       #update & install package
