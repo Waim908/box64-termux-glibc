@@ -31,13 +31,13 @@ jobs:
               echo "make faild"
             else
               make install
-              cd /data/data/com.termux/usr
+              cd /data/data/com.termux/files/usr
               tar -I "xz -T$(nproc)" -cvf ~/box64-glibc.tar.xz glibc/
               cd ~
             fi
           fi
-      - name: Checkout
-        uses: actions/checkout@v5
+      # - name: Checkout
+      #   uses: actions/checkout@v5
       - name: create release
         uses: softprops/action-gh-release@v2
         if: github.ref_type == 'tag'
