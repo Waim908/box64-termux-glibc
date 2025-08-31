@@ -7,23 +7,42 @@ jobs:
   ubuntu:
     runs-on: ubuntu-22.04-arm
     steps:
-      - name: run cmd
+      - name: Build
         run: |
           sudo apt update
           sudo apt install git patchelf gcc-aarch64-linux-gnu
           git clone https://github.com/ptitSeb/box64
           cd box64
+          sudo mkdir /data
+          sudo chmod 777 /data
+          mkdir /data/data
+          mkdir /data/data/com.termux/
+          mkdir /data/data/com.termux/files/
+          mkdir /data/data/com.termux/files/usr
+          mkdir /data/data/com.termux/files/usr/glibc
+          sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
+          sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
           mkdir build
           cd build
-          if ! cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
+          if ! cmake .. -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
           else
-            make -j$(nproc)
-            make install
+            if ! make -j$(nproc); then
+              echo "make faild"
+            else
+              make install
+              cd /data/data/com.termux/usr
+              tar -I "xz -T$(nproc)" -cvf ~/box64-glibc.tar.xz glibc/
+              cd ~
+            fi
           fi
-      - name: Out
-        run: |
-          echo "out"
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: create release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: box64-glibc.tar.xz
 
 
       #update & install package
