@@ -45,6 +45,7 @@ jobs:
           name: test
           draft: false
           prerelease: false
+          tag_name: test
           files: box64-glibc.tar.xz
 
 
