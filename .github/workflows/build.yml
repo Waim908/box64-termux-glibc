@@ -7,15 +7,44 @@ jobs:
   ubuntu:
     runs-on: ubuntu-latest
     steps:
-      - name: update & install package
-        run: |
-          sudo apt update
-          sudo apt install git patchelf gcc-aarch64-linux-gnu
-      - name: git clone
-        run: |
-          git clone https://github.com/ptitSeb/box64
-      - name: build
-        run: |
-          cd box64 && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release
-          make -j$(nproc)
-          make insatll
+      - uses: actions/checkout@v4
+      - uses: uraimo/run-on-arch-action@v3
+        name: aarch64 os
+        id: aarch64
+        with:
+          arch: aarch64
+          distro: ubuntu-latest
+
+          githubToken: ${{ github.token }}
+
+          run: |
+            sudo apt update
+            sudo apt install git patchelf gcc-aarch64-linux-gnu
+            git clone https://github.com/ptitSeb/box64
+            cd box64
+            mkdir build
+            cd build
+            if ! cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
+              echo "cmake failed"
+            else
+              make -j$(nproc)
+              make install
+            fi
+
+
+      #update & install package
+
+      #   run: |
+      #     sudo apt update
+      #     sudo apt install git patchelf gcc-aarch64-linux-gnu
+      # - name: git clone
+      #   run: |
+      #     git clone https://github.com/ptitSeb/box64
+      # - name: build
+      #   run: |
+      #     if ! cd box64 && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
+      #       echo "cmake faild"
+      #     else
+      #       make -j$(nproc)
+      #       make insatll
+      #     fi
