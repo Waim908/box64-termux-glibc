@@ -14,12 +14,8 @@ jobs:
       - name: git clone
         run: |
           git clone https://github.com/ptitSeb/box64
-          cd box64
-          mkdir build
-          cd build
-          pwd
       - name: build
         run: |
-          cmake .. --Dprefix=$HOME/glibc -DARM64=on -DARM_DYNAREC=on -DBAD_SIGNAL=on -DNOLOADADDR=on -DCMAKE_BUILD_TYPE=release
+          cd box64 && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release
           make -j$(nproc)
           make insatll
