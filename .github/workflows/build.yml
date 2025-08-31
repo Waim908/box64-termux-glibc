@@ -5,31 +5,22 @@ on: push
 
 jobs:
   ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
-      - uses: uraimo/run-on-arch-action@v3
-        name: aarch64 os
-        id: aarch64
-        with:
-          arch: aarch64
-          distro: ubuntu-latest
-
-          githubToken: ${{ github.token }}
-
-          run: |
-            sudo apt update
-            sudo apt install git patchelf gcc-aarch64-linux-gnu
-            git clone https://github.com/ptitSeb/box64
-            cd box64
-            mkdir build
-            cd build
-            if ! cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
-              echo "cmake failed"
-            else
-              make -j$(nproc)
-              make install
-            fi
+      - name: run cmd
+        run: |
+          sudo apt update
+          sudo apt install git patchelf gcc-aarch64-linux-gnu
+          git clone https://github.com/ptitSeb/box64
+          cd box64
+          mkdir build
+          cd build
+          if ! cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
+            echo "cmake failed"
+          else
+            make -j$(nproc)
+            make install
+          fi
       - name: Out
         run: |
           echo "out"
