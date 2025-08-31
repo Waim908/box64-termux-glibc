@@ -1,0 +1,23 @@
+### Auto build Box64 and release its binary with Github Action
+name: Build and Release Box64
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: update & install package
+        run: |
+          apt update
+          apt install git patchelf gcc-aarch64-linux-gnu
+      - name: git clone
+        run: |
+          git clone https://github.com/ptitSeb/box64
+          cd box64
+          mkdir build
+          cd build
+          pwd
+      - name: build
+        run: |
+          cmake .. --Dprefix=$HOME/glibc -DARM64=on -DARM_DYNAREC=on -DBAD_SIGNAL=on -DNOLOADADDR=on -DCMAKE_BUILD_TYPE=release
+          make -j$(nproc)
+          make insatll
