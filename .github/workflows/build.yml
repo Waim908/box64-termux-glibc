@@ -41,8 +41,6 @@ jobs:
       - name: create release
         uses: softprops/action-gh-release@v2
         with:
-          env: |
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           name: test
           draft: false
           prerelease: false
@@ -50,6 +48,8 @@ jobs:
           files: |
             /tmp/box64-glibc.tar.xz
             /tmp/md5.txt
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
       #update & install package
