@@ -9,8 +9,8 @@ jobs:
     steps:
       - name: update & install package
         run: |
-          apt update
-          apt install git patchelf gcc-aarch64-linux-gnu
+          sudo apt update
+          sudo apt install git patchelf gcc-aarch64-linux-gnu
       - name: git clone
         run: |
           git clone https://github.com/ptitSeb/box64
