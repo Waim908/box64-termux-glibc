@@ -26,6 +26,7 @@ jobs:
         run: |
           export version=$(curl --request GET --url "https://api.github.com/repos/ptitSeb/box64/releases/latest" --header "Accept: application/vnd.github+json" | grep "tag_name" | sed 's/.*"tag_name": "\(.*\)",/\1/')
           echo "box64Ver=$version" >> $GITHUB_OUTPUT
+          cd /tmp
           wget -O https://github.com/ptitSeb/box64/archive/refs/tags/${version}.tar.gz
           tar xf box64*.tar.xz
           cd box64*
@@ -44,6 +45,7 @@ jobs:
               exit 1
           fi
           mkdir /tmp/glibc
+          cd /tmp/box64*/
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/tmp/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
             exit 1

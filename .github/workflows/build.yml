@@ -23,7 +23,8 @@ jobs:
 
       - name: Clone and sed
         run: |
-          git clone https://github.com/ptitSeb/box64
+          cd /tmp
+          git clone https://github.com/ptitSeb/box64 box64-src
           cd box64
           sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
           sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
@@ -32,7 +33,6 @@ jobs:
 
       - name: Set glibc and Build
         run: |
-          sudo apt autoremove cmake make -y
           export oldPath="$PATH"
           export PATH=/data/data/com.termux/files/usr/glibc/bin:$PATH
           if ! /data/data/com.termux/files/usr/glibc/bin/cmake --version; then
@@ -40,6 +40,7 @@ jobs:
               exit 1
           fi
           mkdir /tmp/glibc
+          cd /tmp/box64-src
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/tmp/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
             exit 1
