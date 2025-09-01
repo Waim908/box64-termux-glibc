@@ -11,7 +11,7 @@ jobs:
       - name: Download termux glibc and mkdir
         run: |
           useCore=$(nproc)
-          wget -o ~/glibc.tar.xz https://github.com/Waim908/box64-termux-glibc/releases/download/nodownload/Lite-glibc-2.41-1.tar.xz
+          wget -O /tmp/glibc.tar.xz https://github.com/Waim908/box64-termux-glibc/releases/download/nodownload/Lite-glibc-2.41-1.tar.xz
           sudo mkdir /data
           sudo chmod 777 /data
           mkdir /data/data
@@ -19,7 +19,7 @@ jobs:
           mkdir /data/data/com.termux/files/
           mkdir /data/data/com.termux/files/usr
           mkdir /data/data/com.termux/files/usr/glibc
-          tar -xf ~/glibc.tar.xz -C /data/data/com.termux/files/usr/
+          tar -xvf /tmp/glibc.tar.xz -C /data/data/com.termux/files/usr/
 
       - name: Clone and sed
         run: |
