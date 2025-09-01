@@ -39,7 +39,7 @@ jobs:
           sudo apt autoremove cmake make -y
           export oldPath="$PATH"
           export PATH=/data/data/com.termux/files/usr/glibc/bin:$PATH
-          export LD_LIBRARY_PATH=/data/data/com.termux/files/usr/glibc/lib
+          export LD_LIBRARY_PATH=/data/data/com.termux/files/usr/glibc/lib:/usr/lib
           /data/data/com.termux/files/usr/glibc/bin/bash
           if ! /data/data/com.termux/files/usr/glibc/bin/cmake --version; then
               echo "glibc cmake test faild!"
@@ -72,6 +72,7 @@ jobs:
           fi
           exit
           export PATH="$oldPath"
+          unset LD_LIBRARY_PATH
           tar -I "xz -T$(nproc)" -cvf /tmp/box64-glibc.tar.xz glibc/
       - name: create release
         uses: softprops/action-gh-release@v2
