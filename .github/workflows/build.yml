@@ -29,7 +29,6 @@ jobs:
           sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
           sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
           mkdir build
-          cd build
 
       - name: Set glibc and Build
         run: |
@@ -41,7 +40,7 @@ jobs:
               exit 1
           fi
           mkdir /tmp/glibc
-          cd /tmp/box64-src
+          cd /tmp/box64-src/build
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/tmp/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
             exit 1
