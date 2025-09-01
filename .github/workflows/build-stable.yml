@@ -46,7 +46,8 @@ jobs:
           fi
           mkdir /tmp/glibc
           cd /tmp/box64*/
-          echo "$(pwd)"
+          mkdir build
+          cd build
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/tmp/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
             exit 1
