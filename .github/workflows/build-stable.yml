@@ -27,7 +27,7 @@ jobs:
           echo "box64Ver=$version" >> $GITHUB_OUTPUT
           cd /tmp
           wget -O src_box64.tar.xz https://github.com/ptitSeb/box64/archive/refs/tags/$version.tar.gz
-          tar xf src_box64*.tar.gz
+          tar xf src_box64.tar.gz
           cd box64*/
           sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
           sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
