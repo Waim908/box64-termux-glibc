@@ -36,7 +36,6 @@ jobs:
 
       - name: Set glibc and Build
         run: |
-          sudo apt autoremove cmake make -y
           export oldPath="$PATH"
           export PATH=/data/data/com.termux/files/usr/glibc/bin:$PATH
           export LD_LIBRARY_PATH=/data/data/com.termux/files/usr/glibc/lib:/usr/lib
@@ -47,6 +46,7 @@ jobs:
           fi
           mkdir /tmp/glibc
           cd /tmp/box64*/
+          echo "$(pwd)"
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/tmp/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
             exit 1
