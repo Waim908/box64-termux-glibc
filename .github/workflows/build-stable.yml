@@ -20,11 +20,15 @@ jobs:
           mkdir /data/data/com.termux/files/usr
           mkdir /data/data/com.termux/files/usr/glibc
           tar -xvf /tmp/glibc.tar.xz -C /data/data/com.termux/files/usr/
-
-      - name: Clone and sed
+      
+      - name: get latest box64 stable source Download and sed
+        id: tag
         run: |
-          git clone https://github.com/ptitSeb/box64
-          cd box64
+          export version=$(curl --request GET --url "https://api.github.com/repos/ptitSeb/box64/releases/latest" --header "Accept: application/vnd.github+json" | grep "tag_name" | sed 's/.*"tag_name": "\(.*\)",/\1/')
+          echo "box64Ver=$version" >> $GITHUB_OUTPUT
+          wget -O https://github.com/ptitSeb/box64/archive/refs/tags/${version}.tar.gz
+          tar xf box64*.tar.xz
+          cd box64*
           sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
           sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
           mkdir build
@@ -68,11 +72,11 @@ jobs:
       - name: create release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ steps.tag.outputs.box64Ver }}
+          name: ${{ steps.tag.outputs.box64Ver }}-stable
           draft: false
           prerelease: false
-          tag_name: ${{ steps.tag.outputs.box64Ver }}
-          body: ${{ steps.tag.outputs.box64Ver }}
+          tag_name: ${{ steps.tag.outputs.box64Ver }}-stable
+          body: ${{ steps.tag.outputs.box64Ver }}-stable
           files: |
             /tmp/box64-glibc.tar.xz
         env:
