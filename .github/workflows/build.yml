@@ -1,4 +1,3 @@
-### Auto build Box64 and release its binary with Github Action
 name: Build and Release Box64
 
 on: push
@@ -26,9 +25,11 @@ jobs:
           cd build
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
+            exit 1
           else
             if ! make -j$(nproc); then
               echo "make faild"
+              exit 1
             else
               make install
               cd /data/data/com.termux/files/usr
@@ -41,30 +42,12 @@ jobs:
       - name: create release
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GH_TOKEN }}
           name: test
           draft: false
           prerelease: false
           tag_name: test
+          body: test
           files: |
             /tmp/box64-glibc.tar.xz
             /tmp/md5.txt
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-      #update & install package
-
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install git patchelf gcc-aarch64-linux-gnu
-      # - name: git clone
-      #   run: |
-      #     git clone https://github.com/ptitSeb/box64
-      # - name: build
-      #   run: |
-      #     if ! cd box64 && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
-      #       echo "cmake faild"
-      #     else
-      #       make -j$(nproc)
-      #       make insatll
-      #     fi
