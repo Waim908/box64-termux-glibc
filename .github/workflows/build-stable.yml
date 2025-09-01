@@ -18,7 +18,7 @@ jobs:
           mkdir /data/data/com.termux/files/
           mkdir /data/data/com.termux/files/usr
           mkdir /data/data/com.termux/files/usr/glibc
-          tar -xvf /tmp/glibc.tar.xz -C /data/data/com.termux/files/usr/
+          tar -xf /tmp/glibc.tar.xz -C /data/data/com.termux/files/usr/
       
       - name: get latest box64 stable source Download and sed
         id: tag
@@ -26,8 +26,8 @@ jobs:
           export version=$(curl --request GET --url "https://api.github.com/repos/ptitSeb/box64/releases/latest" --header "Accept: application/vnd.github+json" | grep "tag_name" | sed 's/.*"tag_name": "\(.*\)",/\1/')
           echo "box64Ver=$version" >> $GITHUB_OUTPUT
           cd /tmp
-          wget -O https://github.com/ptitSeb/box64/archive/refs/tags/${version}.tar.gz
-          tar xf box64*.tar.xz
+          wget -O "https://github.com/ptitSeb/box64/archive/refs/tags/$version.tar.gz"
+          tar xf box64*.tar.gz
           cd box64*
           sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
           sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
