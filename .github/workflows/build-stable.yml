@@ -58,7 +58,7 @@ jobs:
       # - name: Checkout
       #   uses: actions/checkout@v5
       - name:  Test and get Box64 version
-        id: tag 
+        id: testTag
         run: |
           cd /tmp/
           if ! /tmp/glibc/bin/box64 --version; then
@@ -76,7 +76,7 @@ jobs:
           draft: false
           prerelease: false
           tag_name: ${{ steps.tag.outputs.box64Ver }}-stable
-          body: ${{ steps.tag.outputs.box64Ver }}-stable
+          body: ${{ steps.testTag.outputs.box64Ver }}
           files: |
             /tmp/box64-glibc.tar.xz
         env:
