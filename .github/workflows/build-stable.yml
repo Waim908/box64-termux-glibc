@@ -1,4 +1,4 @@
-name: Build and Release Box64
+name: (Stable) Build and Release Box64
 
 # No auto
 on:
