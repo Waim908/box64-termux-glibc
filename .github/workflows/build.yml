@@ -1,17 +1,17 @@
 name: Build and Release Box64
 
-on: push
+# No auto
+on:
+  workflow_dispatch:
 
 jobs:
   ubuntu:
     runs-on: ubuntu-22.04-arm
     steps:
-      - name: Build
+      - name: Download termux glibc and mkdir
         run: |
-          sudo apt update
-          sudo apt install git patchelf gcc-aarch64-linux-gnu
-          git clone https://github.com/ptitSeb/box64
-          cd box64
+          useCore=$(nproc)
+          wget -o ~/glibc.tar.xz https://github.com/Waim908/box64-termux-glibc/releases/download/nodownload/Lite-glibc-2.41-1.tar.xz
           sudo mkdir /data
           sudo chmod 777 /data
           mkdir /data/data
@@ -19,10 +19,25 @@ jobs:
           mkdir /data/data/com.termux/files/
           mkdir /data/data/com.termux/files/usr
           mkdir /data/data/com.termux/files/usr/glibc
+          tar -I 'xz -T${useCore}' ~/glibc.tar.xz -C /data/data/com.termux/files/usr/
+
+      - name: Clone and sed
+        run: |
+          git clone https://github.com/ptitSeb/box64
+          cd box64
           sed -i 's/\/usr/\/data\/data\/com.termux\/files\/usr\/glibc/g' CMakeLists.txt
           sed -i 's/\/etc/\/data\/data\/com.termux\/files\/usr\/glibc\/etc/g' CMakeLists.txt
           mkdir build
           cd build
+
+      - name: Set glibc and Build
+        run: |
+          sudo apt autoremove cmake -y
+          export PATH=/data/data/com.termux/files/usr/glibc/bin:$PATH
+          if ! /data/data/com.termux/files/usr/glibc/bin/camke --version; then
+              echo "glibc cmake test faild!"
+              exit 1
+          fi
           if ! cmake .. -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr/glibc -DARM64=ON -DARM_DYNAREC=ON -DBAD_SIGNAL=ON -DNOLOADADDR=ON -DCMAKE_BUILD_TYPE=Release; then
             echo "cmake failed"
             exit 1
@@ -34,7 +49,6 @@ jobs:
               make install
               cd /data/data/com.termux/files/usr
               tar -I "xz -T$(nproc)" -cvf /tmp/box64-glibc.tar.xz glibc/
-              md5sum /tmp/box64-glibc.tar.xz > /tmp/md5.txt
             fi
           fi
       # - name: Checkout
@@ -42,13 +56,12 @@ jobs:
       - name: create release
         uses: softprops/action-gh-release@v2
         with:
-          name: test
+          name: 0.3.7-dev
           draft: false
           prerelease: false
-          tag_name: test
+          tag_name: 0.3.7-dev
           body: test
           files: |
             /tmp/box64-glibc.tar.xz
-            /tmp/md5.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
