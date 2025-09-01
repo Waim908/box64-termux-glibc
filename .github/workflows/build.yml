@@ -34,7 +34,7 @@ jobs:
         run: |
           sudo apt autoremove cmake -y
           export PATH=/data/data/com.termux/files/usr/glibc/bin:$PATH
-          if ! /data/data/com.termux/files/usr/glibc/bin/camke --version; then
+          if ! /data/data/com.termux/files/usr/glibc/bin/cmake --version; then
               echo "glibc cmake test faild!"
               exit 1
           fi
